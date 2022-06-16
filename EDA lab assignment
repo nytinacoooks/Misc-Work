@@ -1,0 +1,240 @@
+---
+title: "DS311 - R Lab Assignment"
+author: "Nytina Cooks"
+date: "1/26/2022"
+output:
+  html_document:
+    theme: united
+    highlight: tango
+    df_print: paged
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Assignment 1
+
+* In this assignment, we are going to apply some of the build in data set in R for descriptive statistics analysis.
+* To earn full grade in this assignment, students need to complete the coding tasks for each question to get the result.
+* After finished all the questions, knit the document into HTML format for submission.
+
+### Question 1
+
+Using **mtcars** data set in R, please answer the following questions.
+
+```{r}
+# Loading the data
+data(mtcars)
+
+# Head of the data set
+head(mtcars)
+```
+
+a. Report the number of variables and observations in the data set.
+
+```{r}
+# Enter your code here!
+nrow(mtcars)
+dim(mtcars)
+
+
+# Answer:
+print("There are total of 32  variables and 11 observations in this data set.")
+```
+
+b. Print the summary statistics of the data set and report how many discrete and continuous variables are in the data set.
+
+```{r}
+# Enter your code here!
+
+summary(mtcars)
+
+
+# Answer:
+print("There are _____ discrete variables and _____ continuous variables in this data set.")
+```
+
+
+
+c. Calculate the mean, variance, and standard deviation for the variable **mpg** and assign them into variable names m, v, and s. Report the results in the print statement.
+
+```{r}
+# Enter your code here!
+
+mean(mtcars[["mpg"]]) -> m
+var(mtcars[["mpg"]]) -> v
+sd(mtcars[["mpg"]]) -> s
+
+
+# print
+(paste("The average of Mile Per Gallon from this data set is ", 20.09 , " with variance ", 36.32 , " and standard deviation", 6.03 , "."))
+```
+
+
+
+d. Create two ables to summarize 1) average mpg for each cylinder class and 2) the standard deviation of mpg for each gear class.
+
+```{r}
+# Enter your code here!
+
+
+aggregate(mtcars$mpg, by=list(Category=mtcars$cyl), FUN=mean)
+
+aggregate(mtcars$mpg, by=list(Category=mtcars$gear), FUN=sd)
+```
+
+e. Create a crosstab that shows the number of observations belong to each cylinder and gear class combinations. The table should show how many observations given the car has 4 cylinders with 3 gears, 4 cylinders with 4 gears, etc. Report which combination is recorded in this data set and how many observations for this type of car.
+
+```{r}
+# Enter your code here!
+#install.packages("janitor")
+
+library(janitor)
+tabyl(mtcars, gear, cyl)
+
+
+print("The most common car type in this data set is a car with _8__ cylinders and _3___ gears. There are total of __12___ cars belong to this specification in the data set.")
+```
+
+*** 
+
+
+
+### Question 2
+
+Use different visualization tools to summarize the data sets in this question.
+
+a. Using the **PlantGrowth** data set, visualize and compare the weight of the plant in the three separated group. Give labels to the title, x-axis, and y-axis on the graph. Write a paragraph to summarize your findings in this graph.
+
+```{r}
+# Load the data set
+data("PlantGrowth")
+
+# Head of the data set
+head(PlantGrowth)
+
+# Enter your code here!
+library(ggplot2)
+
+ggplot(PlantGrowth, aes(x = group, y = weight)) +
+  geom_bar(
+    aes(),
+    stat = "identity", position = position_stack()
+    ) +
+  scale_color_manual(values = c("#0073C2FF", "#EFC000FF"))+
+  scale_fill_manual(values = c("#0073C2FF", "#EFC000FF"))
+
+p <- ggplot(PlantGrowth, aes(x = group, y = weight)) +
+  geom_bar(
+    aes(),
+    stat = "identity", position = position_dodge(0.8),
+    width = 0.7
+    ) +
+  scale_color_manual(values = c("#0073C2FF", "#EFC000FF"))+
+  scale_fill_manual(values = c("#0073C2FF", "#EFC000FF"))
+p <- p + labs(title = "Plant Growth",
+              caption = "Data source: PlantGrowth")
+p
+```
+
+Result:
+
+=> Enter your results here!
+
+For this data set the data is split into weights for 3 different groups of plants ctrl, trt1, and trt2.  The ctrl group reaches a max growth of 6.11 units while the trt1 group has a max of 6.03, and trt2 group has a max of 6.31.  
+
+b. Using the **mtcars** data set, plot the histogram for the column **mpg** with 10 breaks. Give labels to the title, x-axis, and y-axis on the graph. Report the most observed mpg class from the data set.
+
+```{r}
+
+# histogram with added parameters
+
+hist(mtcars$mpg,
+     main="mtcars", 
+     xlab="mpg", 
+     border="blue", 
+     col="green",
+     xlim=c(10,37),
+     las=1, 
+     breaks=10)
+
+
+print("Most of the cars in this data set are in the class of __15____ mile per gallon.")
+```
+
+
+
+c. Using the **USArrests** data set, create a pairs plot to display the correlations between the variables in the data set. Plot the scatter plot graph of **Murder** and **Assault**. Give labels to the title, x-axis, and y-axis on the graph. Write a paragraph to summarize your results from both plots.
+
+```{r}
+# Load the data set
+data("USArrests")
+
+# Head of the data set
+head(USArrests)
+
+# Enter your code here!
+pairs(USArrests)
+plot(x= USArrests$Murder,y=USArrests$assult,xlab = "murder",ylab = "assult",xlim = c(50,50),main = "US ARRESTS")
+
+
+print("the graphs using the data from the arrests dataset indicates that there is no apparent correlation between the number of murder arrests in a state and the number of assult arrests. THe number of arrests overall appear to be more reliant on other variables such as population of the state which remains unseen in the dataset." )
+```
+
+Result:
+
+=> Enter your result here!
+
+***
+
+
+
+### Question 3
+
+Download the housing data set from www.jaredlander.com and find out what explains the housing prices in New York City.
+
+```{r, echo=FALSE}
+# Load and clean the housing data set 
+download.file(url='https://www.jaredlander.com/data/housing.csv',
+              destfile='data/housing.csv', mode='wb')
+housingData <- read.csv('data/housing.csv')
+housingData <- subset(housingData, 
+                      select = c("Neighborhood", "Market.Value.per.SqFt", "Boro", "Year.Built"))
+housingData <- na.omit(housingData)                   
+```
+
+a. Create your own descriptive statistics and aggregation tables to summarize the data set and find any meaningful results between different variables in the data set.
+
+```{r}
+# Head of the cleaned data set
+head(housingData)
+
+# Enter your code here!
+summary(housingData$Market.Value.per.SqFt)
+aggregate(housingData$Market.Value.per.SqFt, by=list(Category=housingData$Year.Built), FUN=mean)
+```
+
+b. Create multiple plots to demonstrates the correlations between different variables. Remember to label all axes and give title to each graph.
+
+```{r}
+# Enter your code here!
+hist(housingData$Market.Value.per.SqFt,
+     main="Value.per.SqFt", 
+     xlab="Market.Value.per.SqFt", 
+     border="blue", 
+     col="green",
+     xlim=c(10,400),
+     las=1, 
+     breaks=55)
+
+plot(x= housingData$Market.Value.per.SqFt,y=housingData$Year.Built,xlab = "value per sqf",ylab = "year built",xlim = c(10,400),main = "housing data")
+```
+
+c. Write a summary about your findings from this exercise.
+
+Enter your answer here!
+through looking at the frequency table of the dataset we are able to determine that there are a largeer number of instances of market value of up to 100 per square feet. there is also more value per square foot for houses built closer to the years 1900 and 2000.  I chose these graphs to show the significance of the two categories of year and value.
+
